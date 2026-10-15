@@ -1,0 +1,301 @@
+/* TradePerpetual.css */
+
+/* Extend binary options style but add specific overrides for Perpetual mode */
+.perpetual-mode-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Reduced from 16px */
+    padding: 8px;
+    /* Reduced from 16px */
+    background: #F6F8FC;
+    /* Darker background from image */
+}
+
+/* Side Selector Tabs (Buy/Sell) */
+.side-selector {
+    display: flex;
+    background: #ffffff;
+    border-radius: 4px;
+    /* More square as per image */
+    overflow: hidden;
+    margin-bottom: 8px;
+    /* Reduced margin */
+}
+
+.side-tab {
+    flex: 1;
+    padding: 8px;
+    /* Reduced from 12px */
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    /* Reduced from 14px */
+    font-weight: 600;
+    color: #848e9c;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.side-tab.buy.active {
+    color: #0ECB81;
+    /* Bright Green */
+    background: rgba(14, 203, 129, 0.1);
+    border-bottom-color: #0ECB81;
+    position: relative;
+}
+
+/* Diagonal separation effect simulation if needed, but simple tabs are cleaner */
+
+.side-tab.sell.active {
+    color: #F6465D;
+    /* Bright Red */
+    background: rgba(246, 70, 93, 0.1);
+    border-bottom-color: #F6465D;
+}
+
+/* Form Inputs */
+.perp-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    /* Reduced gap */
+    margin-bottom: 8px;
+    /* Reduced margin */
+}
+
+.perp-label {
+    font-size: 11px;
+    /* Smaller label */
+    color: #848e9c;
+}
+
+.perp-input-container {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 4px;
+    padding: 0 8px;
+    /* Tighter padding */
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    height: 32px;
+    /* Explicit smaller height */
+}
+
+.perp-input-container:focus-within {
+    border-color: #06b6d4;
+    /* Cyan highlight */
+}
+
+.perp-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #eaecef;
+    padding: 0;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    outline: none;
+    height: 100%;
+}
+
+.perp-suffix {
+    font-size: 11px;
+    color: #848e9c;
+    margin-left: 6px;
+}
+
+/* Order Type Dropdown Mock */
+.order-type-select {
+    width: 100%;
+    background: #ffffff;
+    color: #eaecef;
+    border: none;
+    padding: 0 8px;
+    /* Tighter padding */
+    height: 32px;
+    /* Match input height */
+    border-radius: 4px;
+    font-size: 12px;
+    outline: none;
+    appearance: none;
+    /* Custom arrow would be added here */
+}
+
+/* Percentage Grid */
+.percentage-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    /* Reduced gap */
+    margin-bottom: 8px;
+}
+
+.percent-btn {
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    color: #848e9c;
+    font-size: 10px;
+    /* Smaller font */
+    padding: 2px;
+    /* Minimal padding */
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 24px;
+}
+
+.percent-btn:hover {
+    background: #2b3139;
+}
+
+/* Balance Display */
+.perp-balance {
+    font-size: 11px;
+    color: #848e9c;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Main Action Button */
+.perp-action-btn {
+    width: 100%;
+    padding: 10px;
+    /* Reduced padding */
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    /* Reduced font */
+    font-weight: 700;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.perp-action-btn.buy {
+    background: #0ECB81;
+}
+
+.perp-action-btn.sell {
+    background: #F6465D;
+}
+
+/* Bottom Tabs (Orders/Assets) */
+.bottom-tabs {
+    display: flex;
+    gap: 16px;
+    /* Reduced gap */
+    margin-top: 16px;
+    /* Reduced margin */
+    border-bottom: 1px solid #2b3139;
+    padding-bottom: 8px;
+    /* Reduced padding */
+}
+
+.bottom-tab {
+    font-size: 14px;
+    color: #848e9c;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.bottom-tab.active {
+    color: #eaecef;
+    font-weight: 700;
+    position: relative;
+}
+
+.bottom-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -9px;
+    /* Adjusted for smaller padding */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #06b6d4;
+}
+
+/* Empty State */
+.empty-record {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    color: #848e9c;
+    gap: 10px;
+}
+
+.empty-icon {
+    font-size: 40px;
+    opacity: 0.3;
+}
+
+/* Drawer Styles */
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+}
+
+.drawer-content {
+    width: 280px;
+    height: 100%;
+    background: #0b0f19;
+    border-right: 1px solid #1f2937;
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.drawer-header {
+    padding: 20px;
+    border-bottom: 1px solid #1f2937;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--color-text-primary);
+    font-weight: bold;
+}
+
+.close-drawer {
+    cursor: pointer;
+    font-size: 20px;
+    color: #9ca3af;
+}
+
+.drawer-list {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.drawer-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #151b28;
+    cursor: pointer;
+    color: var(--color-text-primary);
+    transition: background 0.2s;
+}
+
+.drawer-item:hover,
+.drawer-item.active {
+    background: #ffffff;
+    border-left: 3px solid #00bfb3;
+}

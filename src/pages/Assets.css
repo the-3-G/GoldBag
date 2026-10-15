@@ -1,0 +1,405 @@
+/* src/pages/Assets.css */
+
+.assets-page {
+    padding: 24px 20px 100px;
+    background: transparent;
+    color: var(--color-text-primary);
+}
+
+.assets-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.assets-header .back-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    color: var(--color-text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.assets-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-text-primary);
+}
+
+/* Account Tabs */
+.account-tabs-container {
+    margin-bottom: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
+.account-tabs-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.account-tabs {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 4px;
+    min-width: max-content;
+}
+
+.account-tab {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.account-tab.active {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  color: #ffffff;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+/* Redesigned Balance Card - Premium Glass */
+.account-balance-card {
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(59, 130, 246, 0.06));
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 16px;
+    margin-bottom: 32px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.account-balance-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.account-type-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.converted-label {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.balance-display {
+    margin-top: 8px;
+}
+
+.balance-value {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #06b6d4, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* holdings section */
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #f1f5f9;
+}
+
+.asset-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.asset-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 1px solid rgba(100, 116, 139, 0.15);
+    border-radius: 12px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.asset-card:hover {
+    background: rgba(6, 182, 212, 0.06);
+    border-color: rgba(6, 182, 212, 0.25);
+    transform: translateX(2px);
+    box-shadow: 0 4px 16px rgba(6, 182, 212, 0.08);
+}
+
+.asset-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.asset-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.asset-icon.usdt {
+    color: #26a17b;
+    background: rgba(38, 161, 123, 0.1);
+}
+
+.asset-icon.btc {
+    color: #f7931a;
+    background: rgba(247, 147, 26, 0.1);
+}
+
+.asset-icon.eth {
+    color: #627eea;
+    background: rgba(98, 126, 234, 0.1);
+}
+
+.asset-names {
+    display: flex;
+    flex-direction: column;
+}
+
+.asset-names .name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.asset-names .name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.network-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.asset-names .symbol {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.asset-balance {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.asset-balance .amount {
+    font-size: 17px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--color-text-primary);
+}
+
+.asset-balance .usd-value {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Modal Styling */
+.asset-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+}
+
+.asset-modal {
+    width: 100%;
+    padding: 32px 24px 48px;
+    background: #ffffff;
+    border-top: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 24px 24px 0 0;
+    animation: slideUp 0.3s ease-out;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.modal-handle {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin: -16px auto 24px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.modal-header h2 {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: var(--color-text-primary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.network-distribution {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.dist-label {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.network-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.network-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.network-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.network-name .dot {
+    width: 6px;
+    height: 6px;
+    background: #06b6d4;
+    border-radius: 50%;
+}
+
+.network-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.action-btn {
+    padding: 18px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn.deposit {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    border: none;
+    color: var(--color-text-primary);
+    box-shadow: 0 8px 16px rgba(6, 182, 212, 0.2);
+}
+
+.action-btn.withdraw {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    color: var(--color-text-primary);
+}
+
+.action-btn:active {
+    transform: scale(0.98);
+}
+
+/* Loading state */
+.assets-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    color: #94a3b8;
+    font-size: 18px;
+    font-weight: 600;
+}

@@ -1,0 +1,57 @@
+/* src/components/OrderBook.css */
+.order-book {
+    font-family: 'Roboto', 'Inter', sans-serif;
+    padding: 0;
+    font-size: 11px;
+    color: #848e9c;
+    width: 100%;
+}
+
+.ob-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+.ob-row {
+    display: flex;
+    justify-content: space-between;
+    line-height: 1.6;
+    /* Reduced line height */
+    margin-bottom: 1px;
+}
+
+.ob-price {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+}
+
+.ob-price.red {
+    color: #ff5252;
+}
+
+.ob-price.green {
+    color: #10b981;
+}
+
+.ob-size {
+    color: var(--color-text-primary);
+}
+
+.ob-current-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-text-primary);
+    text-align: center;
+    margin: 6px 0;
+}
+
+.ob-current-price.green {
+    color: #10b981;
+}
+
+.ob-current-price.red {
+    color: #ff5252;
+}

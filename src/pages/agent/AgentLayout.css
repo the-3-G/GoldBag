@@ -1,0 +1,114 @@
+/* src/pages/agent/AgentLayout.css */
+.agent-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #F6F8FC;
+}
+
+.agent-main-content {
+    flex: 1;
+    margin-left: 260px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.agent-layout .mobile-header {
+    display: none;
+    height: 60px;
+    background: #ffffff;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    gap: 12px;
+}
+
+.mobile-toggle-btn {
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    color: #06b6d4;
+    font-size: 1.3rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.mobile-toggle-btn:hover,
+.mobile-toggle-btn:active {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: rgba(6, 182, 212, 0.4);
+}
+
+.mobile-title {
+    color: var(--color-text-primary);
+    font-weight: 700;
+    font-size: 1rem;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile-logout-btn {
+    display: none; /* shown only inside mobile header via media query */
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.mobile-logout-btn:hover,
+.mobile-logout-btn:active {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: #ef4444;
+}
+
+.content-scrollable {
+    flex: 1;
+    padding: 24px;
+    background: transparent;
+    color: var(--color-text-primary);
+}
+
+@media (max-width: 768px) {
+    .agent-main-content {
+        margin-left: 0;
+    }
+
+    .agent-layout .mobile-header {
+        display: flex;
+    }
+
+    .mobile-logout-btn {
+        display: inline-flex;
+    }
+
+    .content-scrollable {
+        padding: 16px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-scrollable {
+        padding: 12px 8px;
+    }
+}

@@ -1,0 +1,289 @@
+/* AccountTransfer.css — redesigned to match client spec */
+
+.account-transfer-page {
+    min-height: 100vh;
+    background: #F6F8FC;
+    padding-bottom: 80px;
+}
+
+/* ── Header ─────────────────────────── */
+.at-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 12px;
+}
+
+.at-back {
+    color: var(--color-text-primary);
+    font-size: 28px;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.at-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+/* ── Container ───────────────────────── */
+.transfer-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* ── From / To card ─────────────────── */
+.at-accounts-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.at-account-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+}
+
+.at-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.at-dot--from { background: #06b6d4; }
+.at-dot--to   { background: #ef4444; }
+
+.at-account-label {
+    font-size: 13px;
+    color: #64748b;
+    width: 32px;
+    flex-shrink: 0;
+}
+
+.at-account-select {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+}
+
+.at-account-select option {
+    background: #ffffff;
+    color: var(--color-text-primary);
+}
+
+.at-divider-line {
+    height: 1px;
+    background: rgba(100, 116, 139, 0.15);
+    margin: 0 20px;
+}
+
+/* ── Amount card ─────────────────────── */
+.at-amount-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.at-amount-label {
+    font-size: 14px;
+    color: var(--color-text-primary);
+    font-weight: 500;
+    margin-bottom: 14px;
+}
+
+.at-amount-input-row {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.25);
+    padding-bottom: 14px;
+    gap: 8px;
+}
+
+.at-amount-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    font-size: 15px;
+    outline: none;
+    min-width: 0;
+}
+
+.at-amount-input::placeholder {
+    color: #4a5568;
+    font-size: 13px;
+}
+
+/* Remove number input arrows */
+.at-amount-input::-webkit-outer-spin-button,
+.at-amount-input::-webkit-inner-spin-button { 
+    -webkit-appearance: none; 
+    appearance: none; 
+}
+.at-amount-input[type=number] { 
+    -moz-appearance: textfield; 
+    appearance: textfield;
+}
+
+.at-amount-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.at-coin-select {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+}
+
+.at-coin-select option {
+    background: #ffffff;
+    color: var(--color-text-primary);
+}
+
+.at-divider-v {
+    color: rgba(100, 116, 139, 0.4);
+    font-size: 16px;
+    line-height: 1;
+}
+
+.at-all-btn {
+    background: transparent;
+    border: none;
+    color: #06b6d4;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s;
+}
+
+.at-all-btn:hover { opacity: 0.7; }
+
+.at-available {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.at-available span {
+    color: #94a3b8;
+}
+
+/* ── Transfer button ─────────────────── */
+.transfer-button {
+    width: 100%;
+    padding: 17px;
+    background: linear-gradient(90deg, #00e5cc, #00c9ff);
+    border: none;
+    border-radius: 12px;
+    color: #0a0e1a;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    margin-bottom: 28px;
+    letter-spacing: 0.5px;
+}
+
+.transfer-button:hover:not(:disabled) { opacity: 0.88; }
+.transfer-button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Transfer history ────────────────── */
+.at-history {
+    margin-top: 4px;
+}
+
+.at-history-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 16px;
+}
+
+.at-history-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1.5fr;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.12);
+    margin-bottom: 4px;
+}
+
+.at-history-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1.5fr;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.07);
+    align-items: start;
+}
+
+.at-history-amount {
+    font-size: 14px;
+    color: var(--color-text-primary);
+    font-weight: 600;
+}
+
+.at-history-record {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.at-history-time {
+    font-size: 11px;
+    color: #64748b;
+    text-align: right;
+}
+
+.at-history-empty {
+    text-align: center;
+    color: #4a5568;
+    font-size: 13px;
+    padding: 28px 0;
+}
+
+/* ── Messages ────────────────────────── */
+.error-message {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.success-message {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #10b981;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}

@@ -1,0 +1,142 @@
+/* src/components/DemoBanner.css */
+
+.demo-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(90deg, #92400e, #d97706, #f59e0b, #d97706, #92400e);
+  background-size: 300% 100%;
+  animation: bannerShimmer 4s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  gap: 12px;
+  box-shadow: 0 2px 20px rgba(245, 158, 11, 0.4);
+  font-family: 'Inter', 'Outfit', sans-serif;
+}
+
+@keyframes bannerShimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.demo-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.demo-pulse-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  animation: demoPulse 1.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes demoPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(1.4); }
+}
+
+.demo-banner-text {
+  font-weight: 700;
+  font-size: 13px;
+  color: #1c1917;
+  letter-spacing: 0.3px;
+}
+
+.demo-banner-text span {
+  font-weight: 900;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.demo-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.demo-btn-create {
+  background: #1c1917;
+  color: #f59e0b;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  letter-spacing: 0.3px;
+}
+
+.demo-btn-create:hover {
+  background: #292524;
+  transform: scale(1.05);
+  color: #fbbf24;
+}
+
+.demo-btn-exit {
+  background: transparent;
+  color: #1c1917;
+  border: 1.5px solid #1c1917;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.demo-btn-exit:hover {
+  background: rgba(0,0,0,0.15);
+  transform: scale(1.05);
+}
+
+/* Push all page content down when banner is visible */
+.demo-mode-active body,
+.demo-mode-active .login-navbar,
+.demo-mode-active .app-root {
+  margin-top: 44px;
+}
+
+.demo-banner-virtual-badge {
+  background: rgba(0,0,0,0.15);
+  color: #1c1917;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  .demo-banner {
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .demo-banner-text {
+    font-size: 11px;
+  }
+  .demo-banner-virtual-badge {
+    display: none;
+  }
+  .demo-btn-create, .demo-btn-exit {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}

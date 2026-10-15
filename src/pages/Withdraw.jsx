@@ -1,0 +1,268 @@
+// src/pages/Withdraw.jsx
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useDemoMode } from "../contexts/DemoContext";
+import DemoBlockModal from "../components/DemoBlockModal";
+import { submitWithdrawal } from "../services/withdrawalService";
+import ParticleBackground from "../components/ParticleBackground";
+import "./Withdraw.css";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
+
+export default function Withdraw() {
+    const { user } = useAuth();
+    const { isDemo } = useDemoMode();
+    const [showDemoBlock, setShowDemoBlock] = useState(isDemo);
+    const [selectedCrypto, setSelectedCrypto] = useState(null);
+    const [amount, setAmount] = useState("");
+    const [address, setAddress] = useState("");
+    const [step, setStep] = useState(1); // 1: Select Asset, 2: Enter Details, 3: Success
+    const [balances, setBalances] = useState({ total: 0, funding: 0 });
+    const [walletAssets, setWalletAssets] = useState({});
+    const [kycStatus, setKycStatus] = useState("unverified");
+
+    React.useEffect(() => {
+        if (!user?.uid) return;
+        const unsub = onSnapshot(doc(db, "users", user.uid), (doc) => {
+            if (doc.exists()) {
+                const userData = doc.data();
+                const status = userData.verification?.status || userData.kycStatus || "unverified";
+                setKycStatus(status);
+            }
+        });
+        return () => unsub();
+    }, [user]);
+
+    React.useEffect(() => {
+        if (!user?.uid) return;
+        const unsub = onSnapshot(doc(db, "wallets", user.uid), (doc) => {
+            if (doc.exists()) {
+                const data = doc.data();
+                const funding = data.mainBalance !== undefined ? data.mainBalance : (data.balance || 0);
+                const total = funding + (data.spotBalance || 0) + (data.tradingBalance || 0) + (data.earnBalance || 0) + (data.contractBalance || 0) + (data.fiatBalance || 0) + (data.commissionBalance || 0);
+                setBalances({ total, funding });
+                setWalletAssets(data.assets || {});
+            }
+        });
+        return () => unsub();
+    }, [user]);
+
+    const balance = balances.funding; // Withdrawals traditionally happen from Funding
+
+    const assets = [
+        { id: "tether", name: "Tether", symbol: "USDT", icon: "₮", balance: (walletAssets.USDT?.total ?? balance).toFixed(2), color: "#26A17B" },
+        { id: "bitcoin", name: "Bitcoin", symbol: "BTC", icon: "₿", balance: (walletAssets.BTC?.total ?? 0).toFixed(8), color: "#F7931A" },
+        { id: "ethereum", name: "Ethereum", symbol: "ETH", icon: "Ξ", balance: (walletAssets.ETH?.total ?? 0).toFixed(8), color: "#627EEA" },
+        { id: "solana", name: "Solana", symbol: "SOL", icon: "◎", balance: (walletAssets.SOL?.total ?? 0).toFixed(4), color: "#14F195" },
+        { id: "binancecoin", name: "BNB", symbol: "BNB", icon: "ⓑ", balance: (walletAssets.BNB?.total ?? 0).toFixed(4), color: "#F3BA2F" },
+        { id: "ripple", name: "XRP", symbol: "XRP", icon: "✕", balance: (walletAssets.XRP?.total ?? 0).toFixed(2), color: "#23292F" },
+        { id: "dogecoin", name: "Dogecoin", symbol: "DOGE", icon: "Ð", balance: (walletAssets.DOGE?.total ?? 0).toFixed(2), color: "#C2A633" }
+    ];
+
+    const handleNext = async () => {
+        if (step === 2) {
+            // Validate inputs
+            if (!amount || parseFloat(amount) <= 0) {
+                alert("Please enter a valid amount");
+                return;
+            }
+            if (parseFloat(amount) > parseFloat(selectedCrypto.balance)) {
+                alert(`Insufficient balance. Maximum available: ${selectedCrypto.balance} ${selectedCrypto.symbol}`);
+                return;
+            }
+            if (!address) {
+                alert("Please enter a destination address");
+                return;
+            }
+
+            try {
+                // Submit withdrawal to Firestore
+                await submitWithdrawal(
+                    user.uid,
+                    amount,
+                    selectedCrypto.symbol,
+                    address
+                );
+                setStep(3);
+            } catch (error) {
+                console.error("Error submitting withdrawal:", error);
+                alert("Failed to submit withdrawal request. Please try again.");
+            }
+        } else {
+            setStep(step + 1);
+        }
+    };
+
+    const handleAssetSelect = (asset) => {
+        setSelectedCrypto(asset);
+        setStep(2);
+    };
+
+    return (
+        <div className="withdraw-page">
+            <ParticleBackground />
+            {showDemoBlock && (
+              <DemoBlockModal feature="Withdrawals" onClose={() => setShowDemoBlock(false)} />
+            )}
+
+            <div className="withdraw-container glass-card">
+                <div className="withdraw-header">
+                    <button
+                        className="back-btn"
+                        onClick={() => step > 1 ? setStep(step - 1) : window.history.back()}
+                    >
+                        ← Back
+                    </button>
+                    <h1>Withdraw Funds</h1>
+                    <div style={{ width: 60 }}></div>
+                </div>
+
+                {/* KYC Verification Notice */}
+                {kycStatus !== 'verified' && (
+                    <div className="kyc-notice-withdraw glass-card" style={{
+                        background: kycStatus === 'unverified' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                        padding: '20px',
+                        marginBottom: '20px',
+                        borderRadius: '12px',
+                        border: '1px solid',
+                        borderColor: kycStatus === 'unverified' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{ fontSize: '32px', marginBottom: '10px' }}>{kycStatus === 'unverified' ? '🛑' : '⚠️'}</div>
+                        <h3 style={{ color: kycStatus === 'unverified' ? '#ef4444' : '#f59e0b', marginTop: 0 }}>
+                            {kycStatus === 'unverified' ? 'Verification Required' : 'KYC Under Review'}
+                        </h3>
+                        <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '15px' }}>
+                            {kycStatus === 'unverified'
+                                ? 'You must verify your identity before withdrawing funds.'
+                                : 'Withdrawals will be enabled once your documents are approved.'}
+                        </p>
+                        {kycStatus === 'unverified' && (
+                            <Link to="/profile?tab=kyc" className="verify-now-btn" style={{
+                                display: 'inline-block',
+                                padding: '10px 20px',
+                                background: '#3b82f6',
+                                color: 'white',
+                                borderRadius: '8px',
+                                textDecoration: 'none',
+                                fontWeight: 700
+                            }}>
+                                Verify Now
+                            </Link>
+                        )}
+                    </div>
+                )}
+
+                {kycStatus === 'verified' && step === 1 && (
+                    <div className="asset-selection">
+                        <h3>Select Asset to Withdraw</h3>
+                        <div className="asset-list">
+                            {assets.map((asset) => (
+                                <div
+                                    key={asset.id}
+                                    className="asset-item"
+                                    onClick={() => handleAssetSelect(asset)}
+                                >
+                                    <div className="asset-icon" style={{ color: asset.color }}>{asset.icon}</div>
+                                    <div className="asset-info">
+                                        <div className="asset-name">{asset.name}</div>
+                                        <div className="asset-symbol">{asset.symbol}</div>
+                                    </div>
+                                    <div className="asset-balance">
+                                        <div className="balance-val">{asset.balance}</div>
+                                        <div className="balance-label">Available</div>
+                                    </div>
+                                    <div className="chevron">›</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {step === 2 && selectedCrypto && (
+                    <div className="withdraw-form">
+                        <div className="selected-asset-summary">
+                            <div className="asset-icon" style={{ color: selectedCrypto.color }}>{selectedCrypto.icon}</div>
+                            <div>
+                                <div className="asset-name">{selectedCrypto.name}</div>
+                                <div className="asset-balance">Available: {selectedCrypto.balance} {selectedCrypto.symbol}</div>
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Withdrawal Address</label>
+                            <input
+                                type="text"
+                                placeholder={`Enter ${selectedCrypto.name} Address`}
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                className="withdraw-input"
+                            />
+                            <p className="input-hint">Ensure the network matches {selectedCrypto.symbol} {selectedCrypto.symbol === "USDT" ? "(TRC20)" : selectedCrypto.symbol === "BNB" ? "(BSC BEP20)" : selectedCrypto.symbol === "SOL" ? "(Solana)" : selectedCrypto.symbol === "XRP" ? "(Ripple)" : selectedCrypto.symbol === "DOGE" ? "(Dogecoin)" : `(${selectedCrypto.symbol})`}</p>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Amount</label>
+                            <div className="amount-input-wrapper">
+                                <input
+                                    type="number"
+                                    placeholder="0.00"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    className="withdraw-input"
+                                />
+                                <button className="max-btn" onClick={() => setAmount(selectedCrypto.balance)}>MAX</button>
+                            </div>
+                        </div>
+
+                        {(() => {
+                            const fee = selectedCrypto.symbol === "BTC" ? 0.0005 : selectedCrypto.symbol === "ETH" ? 0.005 : selectedCrypto.symbol === "USDT" ? 1.0 : selectedCrypto.symbol === "SOL" ? 0.01 : selectedCrypto.symbol === "BNB" ? 0.002 : selectedCrypto.symbol === "XRP" ? 0.25 : selectedCrypto.symbol === "DOGE" ? 1.0 : 0.0005;
+                            return (
+                                <>
+                                    <div className="summary-row">
+                                        <span>Network Fee</span>
+                                        <span>{fee} {selectedCrypto.symbol}</span>
+                                    </div>
+                                    <div className="summary-row total">
+                                        <span>Total Receive</span>
+                                        <span>{amount ? Math.max(0, parseFloat(amount) - fee).toFixed(selectedCrypto.symbol === "BTC" || selectedCrypto.symbol === "ETH" ? 6 : 4) : "0.00"} {selectedCrypto.symbol}</span>
+                                    </div>
+                                </>
+                            );
+                        })()}
+
+                        <button className="withdraw-submit-btn" onClick={handleNext}>
+                            Confirm Withdrawal
+                        </button>
+                    </div>
+                )}
+
+                {step === 3 && (
+                    <div className="success-state">
+                        <div className="success-icon">✓</div>
+                        <h2>Withdrawal Submitted</h2>
+                        <p>Your withdrawal request has been received and is being processed.</p>
+                        <div className="tx-details">
+                            <div className="tx-row">
+                                <span>Amount</span>
+                                <span>{amount} {selectedCrypto.symbol}</span>
+                            </div>
+                            <div className="tx-row">
+                                <span>Address</span>
+                                <span className="address-truncate">{address}</span>
+                            </div>
+                            <div className="tx-row">
+                                <span>Status</span>
+                                <span className="status-pending">Pending Review</span>
+                            </div>
+                        </div>
+                        <button className="home-btn" onClick={() => window.location.href = '/home'}>
+                            Return to Dashboard
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

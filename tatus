@@ -1,0 +1,16 @@
+* [33mb2bae36[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix CSS syntax in Home.css
+* [33mc79baaf[m Fix CSS comments and environment build configuration
+*   [33mb64cbde[m Resolve merge conflicts and fix Vercel CI build
+[32m|[m[33m\[m  
+[32m|[m * [33mc9e8ec6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: add AlertModal component for toast notifications
+[32m|[m * [33maa754d0[m feat: add CSS styles for the AlertModal component
+[32m|[m * [33m756605a[m feat: add CSS styles for the AlertModal component
+[32m|[m * [33mbd16726[m feat: add AlertModal component and integrate into the Trade page for transaction feedback
+[32m|[m * [33m965cbe8[m feat: add LandingPage and Trade pages with responsive design and scroll animations
+[32m|[m * [33m5c3e90f[m fix: build
+[32m|[m * [33m2545d90[m fix: build
+[32m|[m * [33m22decec[m fix: build
+[32m|[m * [33m2c3cd66[m fix: build
+[32m|[m * [33me221f9f[m fix: build
+[32m|[m * [33m63fa48f[m feat: add DataTable and Settings page components with supporting stylesheets
+[32m|[m * [33m304520c[m feat: add DataTable and Settings page components with supporting stylesheets

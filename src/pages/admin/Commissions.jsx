@@ -1,0 +1,205 @@
+// src/pages/admin/Commissions.jsx
+import React, { useState, useEffect } from "react";
+import DataTable from "../../components/DataTable";
+import { db } from "../../firebase";
+import { collection, getDocs, query } from "firebase/firestore";
+import "./AdminDashboard.css";
+
+export default function AdminCommissions() {
+    const [commissions, setCommissions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState({
+        adminProfit: 0,         // 50%
+        agentCommissions: 0,    // 40%
+        builderFees: 0,         // 10%
+        totalDeposits: 0
+    });
+
+    useEffect(() => {
+        loadCommissions();
+    }, []);
+
+    const loadCommissions = async () => {
+        try {
+            setLoading(true);
+
+            // Fetch all commissions and users in parallel
+            const commissionsRef = collection(db, "commissions");
+            const q = query(commissionsRef);
+            const [snapshot, usersSnap] = await Promise.all([
+                getDocs(q),
+                getDocs(collection(db, "users"))
+            ]);
+
+            const userMap = new Map();
+            usersSnap.docs.forEach(uDoc => {
+                const uData = uDoc.data();
+                userMap.set(uDoc.id, uData);
+                if (uData.uid) userMap.set(uData.uid, uData);
+            });
+
+            const history = snapshot.docs.map(commissionDoc => {
+                const commissionData = commissionDoc.data();
+                const agentData = commissionData.agentId ? userMap.get(commissionData.agentId) : null;
+                const agentName = agentData?.name || agentData?.email || "Unknown Agent";
+
+                return {
+                    id: commissionDoc.id,
+                    ...commissionData,
+                    agentName,
+                    createdAt: commissionData.createdAt?.toDate ? commissionData.createdAt.toDate() : (commissionData.createdAt ? new Date(commissionData.createdAt) : null)
+                };
+            });
+
+            // Client-side sorting
+            history.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+            setCommissions(history);
+
+            // Calculate stats
+            const adminProfit = history.reduce((sum, c) => sum + (c.platformProfit || 0), 0);      // 50%
+            const agentCommissions = history.reduce((sum, c) => sum + (c.agentCommission || 0), 0); // 40%
+            const builderFees = history.reduce((sum, c) => sum + (c.platformFee || 0), 0);          // 10%
+            const totalDeposits = history.reduce((sum, c) => sum + (c.depositAmount || 0), 0);
+
+            setStats({
+                adminProfit,      // 50% of deposits
+                agentCommissions, // 40% of deposits
+                builderFees,      // 10% of deposits
+                totalDeposits
+            });
+        } catch (error) {
+            console.error("Error loading commissions:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const columns = [
+        {
+            header: "Date",
+            key: "createdAt",
+            render: (value) => value ? new Date(value).toLocaleDateString() : '-'
+        },
+        {
+            header: "Agent",
+            key: "agentName",
+            render: (value) => (
+                <div style={{ fontSize: '13px', fontWeight: 500, color: '#0f172a' }}>
+                    {value || "Unknown Agent"}
+                </div>
+            )
+        },
+        {
+            header: "Deposit",
+            key: "depositAmount",
+            render: (value) => `$${value?.toFixed(2) || '0.00'}`
+        },
+        {
+            header: "Platform Fee (10%)",
+            key: "platformFee",
+            render: (value) => (
+                <span style={{ color: '#0f172a' }}>
+                    ${value?.toFixed(2) || '0.00'}
+                </span>
+            )
+        },
+        {
+            header: "Agent Cut (40%)",
+            key: "agentCommission",
+            render: (value) => (
+                <span style={{ color: '#10b981', fontWeight: 600 }}>
+                    ${value?.toFixed(2) || '0.00'}
+                </span>
+            )
+        },
+        {
+            header: "Admin Profit (50%)",
+            key: "platformProfit",
+            render: (value) => (
+                <span style={{ color: '#3b82f6', fontWeight: 600 }}>
+                    ${value?.toFixed(2) || '0.00'}
+                </span>
+            )
+        }
+    ];
+
+    if (loading) {
+        return <div className="p-8 text-center text-gray-400">Loading commissions...</div>;
+    }
+
+    return (
+        <div className="commissions-page">
+            <div className="page-header">
+                <div>
+                    <h1 className="page-title gradient-text">All Commissions</h1>
+                    <p className="page-subtitle">Global commission tracking and platform revenue</p>
+                </div>
+                <button
+                    onClick={async () => {
+                        if (window.confirm("Recalculate commissions for all past deposits? This may take a moment.")) {
+                            try {
+                                setLoading(true);
+                                const { recalculateCommissions } = await import("../../services/adminService");
+                                const result = await recalculateCommissions();
+                                alert(`Recalculation complete!\nCreated: ${result.created}\nSkipped: ${result.skipped}`);
+                                loadCommissions();
+                            } catch (err) {
+                                console.error(err);
+                                alert("Error recalculating: " + err.message);
+                            } finally {
+                                setLoading(false);
+                            }
+                        }
+                    }}
+                    className="action-btn action-btn-primary"
+                    style={{ height: 'fit-content' }}
+                >
+                    🔄 Recalculate All
+                </button>
+            </div>
+
+            {/* Commission Stats */}
+            <div className="commission-stats-grid">
+                <div className="stat-card glass-card">
+                    <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.1)' }}>👑</div>
+                    <div className="stat-content">
+                        <div className="stat-label">Admin Profit (50%)</div>
+                        <div className="stat-value" style={{ color: '#3b82f6' }}>
+                            ${stats.adminProfit?.toFixed(2) || '0.00'}
+                        </div>
+                    </div>
+                </div>
+                <div className="stat-card glass-card">
+                    <div className="stat-icon" style={{ background: 'rgba(245, 158, 11, 0.1)' }}>🔧</div>
+                    <div className="stat-content">
+                        <div className="stat-label">Builder Fees (10%)</div>
+                        <div className="stat-value" style={{ color: '#f59e0b' }}>
+                            ${stats.builderFees?.toFixed(2) || '0.00'}
+                        </div>
+                    </div>
+                </div>
+                <div className="stat-card glass-card">
+                    <div className="stat-icon" style={{ background: 'rgba(16, 185, 129, 0.1)' }}>👥</div>
+                    <div className="stat-content">
+                        <div className="stat-label">Agent Commissions (40%)</div>
+                        <div className="stat-value" style={{ color: '#10b981' }}>
+                            ${stats.agentCommissions?.toFixed(2) || '0.00'}
+                        </div>
+                    </div>
+                </div>
+                <div className="stat-card glass-card">
+                    <div className="stat-icon">📈</div>
+                    <div className="stat-content">
+                        <div className="stat-label">Total Deposits Processed</div>
+                        <div className="stat-value">
+                            ${stats.totalDeposits?.toFixed(2) || '0.00'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <DataTable columns={columns} data={commissions} />
+        </div >
+    );
+}
