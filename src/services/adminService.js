@@ -9,6 +9,7 @@ import {
     updateDoc,
     setDoc,
     addDoc,
+    deleteDoc,
     where,
     orderBy,
     limit,
@@ -244,6 +245,68 @@ export const freezeUser = async (userId, freeze = true) => {
         return { success: true };
     } catch (error) {
         console.error("Error freezing user:", error);
+        throw error;
+    }
+};
+
+// Delete user and associated wallet from Firestore
+export const deleteUser = async (userId) => {
+    try {
+        // Best-effort deletion of wallet
+        try {
+            await deleteDoc(doc(db, "wallets", userId));
+        } catch (e) {
+            console.warn("Wallet document delete warning:", e);
+        }
+
+        // Delete user document
+        await deleteDoc(doc(db, "users", userId));
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        throw error;
+    }
+};
+
+// Bulk delete all frozen users (safely excluding admins)
+export const deleteFrozenUsers = async (options = { excludeAdmins: true }) => {
+    try {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("frozen", "==", true));
+        const snapshot = await getDocs(q);
+
+        const protectedEmails = ["baggold57@gmail.com", "blenzeru27@gmail.com"];
+        const toDelete = [];
+
+        snapshot.docs.forEach(docSnap => {
+            const data = docSnap.data();
+            const isAdmin = data.role === "admin" || protectedEmails.includes(data.email?.toLowerCase());
+            if (options.excludeAdmins && isAdmin) {
+                return; // protect admin
+            }
+            toDelete.push({ id: docSnap.id, email: data.email, name: data.name });
+        });
+
+        const results = {
+            total: toDelete.length,
+            deleted: 0,
+            failed: 0,
+            errors: []
+        };
+
+        for (const item of toDelete) {
+            try {
+                await deleteUser(item.id);
+                results.deleted++;
+            } catch (err) {
+                results.failed++;
+                results.errors.push({ id: item.id, email: item.email, error: err.message });
+            }
+        }
+
+        return results;
+    } catch (error) {
+        console.error("Error bulk deleting frozen users:", error);
         throw error;
     }
 };

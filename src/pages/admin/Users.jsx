@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import DataTable from "../../components/DataTable";
 import Modal from "../../components/Modal";
 import { useAuth } from "../../contexts/AuthContext";
-import { getAllUsers, setUserBalance, freezeUser, assignUserToAgent, getAllAgents, setUserWalletAddress, getUserWalletAddresses } from "../../services/adminService";
+import { getAllUsers, setUserBalance, freezeUser, assignUserToAgent, getAllAgents, setUserWalletAddress, getUserWalletAddresses, deleteUser, deleteFrozenUsers } from "../../services/adminService";
 import { setUserTradeControl } from "../../services/tradeSettingsService";
 import { approveVerification, rejectVerification } from "../../services/verificationService";
 import "./Users.css";
@@ -75,6 +75,53 @@ export default function Users() {
             await loadUsers();
         } catch (error) {
             console.error("Error freezing user:", error);
+        }
+    };
+
+    const handleDeleteUser = async (user) => {
+        if (user.role === 'admin' || user.email === 'baggold57@gmail.com' || user.email === 'blenzeru27@gmail.com') {
+            alert("❌ Cannot delete an administrator account!");
+            return;
+        }
+
+        const confirmMsg = `Are you sure you want to permanently delete user "${user.name || user.email}" (${user.email})?\n\nThis will remove their profile and wallet from the database.`;
+        if (!window.confirm(confirmMsg)) return;
+
+        try {
+            await deleteUser(user.id);
+            alert(`✅ User ${user.email} deleted successfully.`);
+            await loadUsers();
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            alert(`❌ Failed to delete user: ${error.message}`);
+        }
+    };
+
+    const handleDeleteAllFrozen = async () => {
+        const frozenUsers = users.filter(
+            u => u.frozen && u.role !== 'admin' && u.email !== 'baggold57@gmail.com' && u.email !== 'blenzeru27@gmail.com'
+        );
+
+        if (frozenUsers.length === 0) {
+            alert("No frozen users found to delete (admins are protected).");
+            return;
+        }
+
+        const previewList = frozenUsers.map(u => `• ${u.name || 'Unnamed'} (${u.email}) [Role: ${u.role || 'user'}, Balance: $${u.balance?.toFixed(2) || '0.00'}]`).join('\n');
+        const confirmMsg = `⚠️ WARNING: You are about to permanently delete ${frozenUsers.length} frozen account(s) from the database:\n\n${previewList}\n\n(Admins are protected and will NOT be deleted)\n\nDo you want to proceed?`;
+
+        if (!window.confirm(confirmMsg)) return;
+
+        try {
+            setLoading(true);
+            const res = await deleteFrozenUsers({ excludeAdmins: true });
+            alert(`✅ Successfully deleted ${res.deleted} of ${res.total} frozen accounts.`);
+            await loadUsers();
+        } catch (error) {
+            console.error("Error bulk deleting frozen accounts:", error);
+            alert(`❌ Failed to delete frozen accounts: ${error.message}`);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -307,6 +354,18 @@ export default function Users() {
             >
                 {row.frozen ? 'Unfreeze' : 'Freeze'}
             </button>
+            <button
+                className="action-btn"
+                style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    color: '#ef4444',
+                    border: '1px solid rgba(239, 68, 68, 0.3)'
+                }}
+                onClick={() => handleDeleteUser(row)}
+                title="Permanently delete user from database"
+            >
+                🗑️ Delete
+            </button>
         </>
     );
 
@@ -325,7 +384,29 @@ export default function Users() {
                     <h1 className="page-title gradient-text">User Management</h1>
                     <p className="page-subtitle">Manage all platform users</p>
                 </div>
-                <div className="header-stats">
+                <div className="header-stats" style={{ alignItems: 'center' }}>
+                    {users.some(u => u.frozen && u.role !== 'admin' && u.email !== 'baggold57@gmail.com' && u.email !== 'blenzeru27@gmail.com') && (
+                        <button
+                            className="action-btn"
+                            style={{
+                                background: 'rgba(239, 68, 68, 0.12)',
+                                color: '#ef4444',
+                                border: '1px solid rgba(239, 68, 68, 0.35)',
+                                padding: '8px 16px',
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                            }}
+                            onClick={handleDeleteAllFrozen}
+                            title="Delete all frozen users (excluding admins)"
+                        >
+                            🗑️ Delete All Frozen ({users.filter(u => u.frozen && u.role !== 'admin' && u.email !== 'baggold57@gmail.com' && u.email !== 'blenzeru27@gmail.com').length})
+                        </button>
+                    )}
                     <div className="stat-item">
                         <span className="stat-label">Total Users</span>
                         <span className="stat-value">{users.length}</span>
